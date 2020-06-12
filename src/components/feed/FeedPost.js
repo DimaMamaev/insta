@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFeedPostStyles } from "../../styles";
 import UserCard from "../shared/UserCard";
-import { MoreIcon, CommentIcon } from "../../icons";
+import { MoreIcon, CommentIcon, ShareIcon } from "../../icons";
 import { Link } from "react-router-dom";
+import { Typography, Button } from "@material-ui/core";
+import HTMLEllipsis from "react-lines-ellipsis/lib/html";
 
 function FeedPost({ post }) {
   const classes = useFeedPostStyles();
-  const { media, id } = post;
+  const [showCaption, setCaption] = useState(false);
+  const { media, id, likes, user, caption } = post;
 
   return (
     <>
@@ -25,7 +28,46 @@ function FeedPost({ post }) {
             <Link to={`/p/${id}`}>
               <CommentIcon />
             </Link>
+            <ShareIcon />
+            <SaveBtn />
           </div>
+          <Typography className={classes.like} variant="subtitile2">
+            <span> {likes === 1 ? "1 like" : `${likes} likes `} </span>
+          </Typography>
+        </div>
+        <div className={showCaption ? classes.expanded : classes.collapsed}>
+          <Link to={`/${user.username}`}>
+            <Typography
+              variant="subtitle2"
+              className={classes.username}
+              component="span"
+            >
+              {user.username}
+            </Typography>
+          </Link>
+          {showCaption ? (
+            <Typography
+              component="span"
+              variant="body2"
+              dangerouslySetInnerHTML={{ __html: caption }}
+            />
+          ) : (
+            <div className={classes.captionWrapper}>
+              <HTMLEllipsis
+                unsafeHTML={caption}
+                className={classes.caption}
+                maxLine="0"
+                ellipsis="..."
+                basedOn="letters"
+              />
+              <Button
+                className={classes.moreButton}
+                onClick={() => setCaption(true)}
+              >
+                more
+              </Button>
+            </div>
+          )}
         </div>
       </article>
     </>
@@ -35,5 +77,7 @@ function FeedPost({ post }) {
 function LikeBtn() {
   return null;
 }
-
+function SaveBtn() {
+  return null;
+}
 export default FeedPost;
