@@ -9,7 +9,7 @@ import HTMLEllipsis from "react-lines-ellipsis/lib/html";
 function FeedPost({ post }) {
   const classes = useFeedPostStyles();
   const [showCaption, setCaption] = useState(false);
-  const { media, id, likes, user, caption } = post;
+  const { media, id, likes, user, caption, comments } = post;
 
   return (
     <>
@@ -69,6 +69,15 @@ function FeedPost({ post }) {
             </div>
           )}
         </div>
+        <Link to={`/p/${id}`}>
+          <Typography
+            className={classes.commentsLink}
+            variant="body2"
+            component="div"
+          >
+            View all {comments.length} comments.
+          </Typography>
+        </Link>
       </article>
     </>
   );
