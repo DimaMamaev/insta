@@ -1,9 +1,23 @@
 import React, { useState } from "react";
 import { useFeedPostStyles } from "../../styles";
 import UserCard from "../shared/UserCard";
-import { MoreIcon, CommentIcon, ShareIcon } from "../../icons";
+import {
+  MoreIcon,
+  CommentIcon,
+  ShareIcon,
+  UnlikeIcon,
+  LikeIcon,
+  RemoveIcon,
+  SaveIcon,
+} from "../../icons";
 import { Link } from "react-router-dom";
-import { Typography, Button } from "@material-ui/core";
+import {
+  Typography,
+  Button,
+  Hidden,
+  Divider,
+  TextField,
+} from "@material-ui/core";
 import HTMLEllipsis from "react-lines-ellipsis/lib/html";
 
 function FeedPost({ post }) {
@@ -15,7 +29,7 @@ function FeedPost({ post }) {
     <>
       <article className={classes.article}>
         <div className={classes.postHeader}>
-          <UserCard />
+          <UserCard user={user} />
           <MoreIcon className={classes.moreIcon} />
         </div>
 
@@ -34,59 +48,135 @@ function FeedPost({ post }) {
           <Typography className={classes.like} variant="subtitile2">
             <span> {likes === 1 ? "1 like" : `${likes} likes `} </span>
           </Typography>
-        </div>
-        <div className={showCaption ? classes.expanded : classes.collapsed}>
-          <Link to={`/${user.username}`}>
+
+          <div className={showCaption ? classes.expanded : classes.collapsed}>
+            <Link to={`/${user.username}`}>
+              <Typography
+                variant="subtitle2"
+                className={classes.username}
+                component="span"
+              >
+                {user.username}
+              </Typography>
+            </Link>
+            {showCaption ? (
+              <Typography
+                component="span"
+                variant="body2"
+                dangerouslySetInnerHTML={{ __html: caption }}
+              />
+            ) : (
+              <div className={classes.captionWrapper}>
+                <HTMLEllipsis
+                  unsafeHTML={caption}
+                  className={classes.caption}
+                  maxLine="0"
+                  ellipsis="..."
+                  basedOn="letters"
+                />
+                <Button
+                  className={classes.moreButton}
+                  onClick={() => setCaption(true)}
+                >
+                  more
+                </Button>
+              </div>
+            )}
+          </div>
+          <Link to={`/p/${id}`}>
             <Typography
-              variant="subtitle2"
-              className={classes.username}
-              component="span"
+              className={classes.commentsLink}
+              variant="body2"
+              component="div"
             >
-              {user.username}
+              View all {comments.length} comments.
             </Typography>
           </Link>
-          {showCaption ? (
-            <Typography
-              component="span"
-              variant="body2"
-              dangerouslySetInnerHTML={{ __html: caption }}
-            />
-          ) : (
-            <div className={classes.captionWrapper}>
-              <HTMLEllipsis
-                unsafeHTML={caption}
-                className={classes.caption}
-                maxLine="0"
-                ellipsis="..."
-                basedOn="letters"
-              />
-              <Button
-                className={classes.moreButton}
-                onClick={() => setCaption(true)}
-              >
-                more
-              </Button>
+          {comments.map((comment) => (
+            <div key={comment.id}>
+              <Link to={`/${comment.user.username}`}>
+                <Typography
+                  variant="subtitle2"
+                  component="span"
+                  className={classes.commentUsername}
+                >
+                  {comment.user.username}
+                </Typography>{" "}
+                <Typography variant="body2" component="span">
+                  {comment.content}
+                </Typography>
+              </Link>
             </div>
-          )}
-        </div>
-        <Link to={`/p/${id}`}>
-          <Typography
-            className={classes.commentsLink}
-            variant="body2"
-            component="div"
-          >
-            View all {comments.length} comments.
+          ))}
+          <Typography color="textSecondary" className={classes.datePosted}>
+            1 DAY AGO
           </Typography>
-        </Link>
+        </div>
+        <Hidden xsDown>
+          <Divider />
+          <Comment />
+        </Hidden>
       </article>
     </>
   );
 }
 
 function LikeBtn() {
-  return null;
+  const classes = useFeedPostStyles();
+  const [like, setLike] = useState(false);
+  const Icon = like ? UnlikeIcon : LikeIcon;
+  const className = like ? classes.liked : classes.like;
+  const onClick = like ? handleUnLike : handleLike;
+  function handleUnLike() {
+    setLike(false);
+  }
+  function handleLike() {
+    setLike(true);
+  }
+  return <Icon className={className} onClick={onClick} />;
 }
 function SaveBtn() {
-  return null;
+  const classes = useFeedPostStyles();
+  const [save, setSave] = useState(false);
+  const Icon = save ? RemoveIcon : SaveIcon;
+  const onClick = save ? handleUnSave : handleSave;
+  function handleUnSave() {
+    setSave(false);
+  }
+  function handleSave() {
+    setSave(true);
+  }
+  return <Icon className={classes.saveIcon} onClick={onClick} />;
+}
+function Comment() {
+  const classes = useFeedPostStyles();
+  const [text, setText] = useState("");
+  return (
+    <div className={classes.commentContainer}>
+      <TextField
+        fullWidth
+        value={text}
+        placeholder="Add a comment"
+        multiline
+        rowsMax={2}
+        rows={1}
+        className={classes.textField}
+        onChange={(event) => setText(event.target.value)}
+        inputProps={{
+          classes: {
+            root: classes.root,
+            underline: classes.underline,
+          },
+        }}
+      />
+      <Button
+        color="primary"
+        className={classes.commentButton}
+        disabled={!text.trim()}
+      >
+        Post
+      </Button>
+    </div>
+  );
 }
 export default FeedPost;
