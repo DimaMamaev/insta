@@ -11,7 +11,7 @@ import FollowButton from "./FollowButton";
 
 function FollowSuggestions({ hideHeader }) {
   const classes = useFollowSuggestionsStyles();
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   return (
     <div className={classes.container}>

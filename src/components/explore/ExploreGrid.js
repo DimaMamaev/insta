@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useExploreGridStyles } from "../../styles";
-import { Typography, Grid } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import { LoadingLargeIcon } from "../../icons";
 import { getDefaultPost } from "../../data";
 import GridPost from "../shared/GridPost";

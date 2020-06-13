@@ -3,7 +3,7 @@ import { useProfilePageStyles } from "../styles";
 import Layout from "../components/shared/Layout";
 
 function ProfilePage() {
-  const classes = useProfilePageStyles();
+  useProfilePageStyles();
 
   return <Layout>ProfilePage</Layout>;
 }

@@ -54,7 +54,7 @@ function Search({ history }) {
   const classes = useNavbarStyles();
   const [text, setText] = useState("");
   const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   const resultCheck = Boolean(text) && text.length > 0;
 

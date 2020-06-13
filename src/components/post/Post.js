@@ -18,7 +18,6 @@ import {
   Divider,
   TextField,
 } from "@material-ui/core";
-import FollowSuggestions from "../shared/FollowSuggestions";
 import OptionsDialog from "../shared/OptionsDialog";
 import { defaultPost } from "../../data";
 
@@ -50,7 +49,7 @@ function Post() {
             <ShareIcon />
             <SaveBtn />
           </div>
-          <Typography className={classes.likes} variant="subtitile2">
+          <Typography className={classes.likes} variant="subtitle2">
             <span> {likes === 1 ? "1 like" : `${likes} likes `} </span>
           </Typography>
 
