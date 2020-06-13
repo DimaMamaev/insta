@@ -8,8 +8,6 @@ function UserCard({ user = defaultUser, avatarSize = 44 }) {
   const classes = useUserCardStyles({ avatarSize });
   const { username, name, profile_image } = user;
 
-  console.log(username, name, profile_image);
-
   return (
     <div className={classes.wrapper}>
       <Link to={`/${username}`}>

@@ -55,7 +55,7 @@ function FeedPost({ post, index }) {
             <ShareIcon />
             <SaveBtn />
           </div>
-          <Typography className={classes.likes} variant="subtitile2">
+          <Typography className={classes.likes} variant="subtitle2">
             <span> {likes === 1 ? "1 like" : `${likes} likes `} </span>
           </Typography>
 
