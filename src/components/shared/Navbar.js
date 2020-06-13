@@ -26,20 +26,28 @@ import {
 import { defaultCurrentUser, getDefaultUser } from "../../data";
 import NotificationTooltip from "../notification/NotificationTooltip";
 import NotificationList from "../notification/NotificationList";
+import { useNProgress } from "@tanem/react-nprogress";
 
 function Navbar({ minimal }) {
   const classes = useNavbarStyles();
   const history = useHistory();
   const path = history.location.pathname;
+  const [isPageLoading, setPageLoading] = useState(true);
+  useEffect(() => {
+    setPageLoading(false);
+  }, [path]);
 
   return (
-    <AppBar className={classes.appBar}>
-      <section className={classes.section}>
-        <Logo />
-        {!minimal && <Search history={history} />}
-        {!minimal && <Links path={path} />}
-      </section>
-    </AppBar>
+    <>
+      <Progress isAnimating={isPageLoading} />
+      <AppBar className={classes.appBar}>
+        <section className={classes.section}>
+          <Logo />
+          {!minimal && <Search history={history} />}
+          {!minimal && <Links path={path} />}
+        </section>
+      </AppBar>
+    </>
   );
 }
 function Search({ history }) {
@@ -131,9 +139,12 @@ function Links({ path }) {
   function handleHideToolTip() {
     setToolTip(false);
   }
+  function handleHideList() {
+    setList(false);
+  }
   return (
     <div className={classes.linksContainer}>
-      {showList && <NotificationList />}
+      {showList && <NotificationList handleHideList={handleHideList} />}
       <div className={classes.linksWrapper}>
         <Hidden xsDown>
           <AddIcon />
@@ -181,6 +192,32 @@ function Logo() {
           <img src={logo} alt="Insta logo" className={classes.logo} />
         </div>
       </Link>
+    </div>
+  );
+}
+function Progress({ isAnimating }) {
+  const classes = useNavbarStyles();
+  const { animationDuration, progress, isFinished } = useNProgress({
+    isAnimating,
+  });
+
+  return (
+    <div
+      className={classes.progressContainer}
+      style={{
+        opacity: isFinished ? 0 : 1,
+        transition: `opacity ${animationDuration}ms linear`,
+      }}
+    >
+      <div
+        className={classes.progressBar}
+        style={{
+          marginLeft: `${(-1 + progress) * 100}%`,
+          transition: `margin-left ${animationDuration}ms linear`,
+        }}
+      >
+        <div className={classes.progressBackground} />
+      </div>
     </div>
   );
 }
