@@ -3,6 +3,7 @@ import { useExploreGridStyles } from "../../styles";
 import { Typography, Grid } from "@material-ui/core";
 import { LoadingLargeIcon } from "../../icons";
 import { getDefaultPost } from "../../data";
+import GridPost from "../shared/GridPost";
 
 function ExploreGrid() {
   const classes = useExploreGridStyles();
@@ -25,7 +26,7 @@ function ExploreGrid() {
         <article className={classes.article}>
           <div className={classes.postContainer}>
             {Array.from({ length: 12 }, () => getDefaultPost()).map((post) => (
-              <GridPost key={post.id} />
+              <GridPost key={post.id} post={post} />
             ))}
           </div>
         </article>
@@ -33,7 +34,5 @@ function ExploreGrid() {
     </>
   );
 }
-function GridPost() {
-  return <h1>null</h1>;
-}
+
 export default ExploreGrid;
