@@ -2,8 +2,8 @@ import { v4 as uuid } from "uuid";
 
 export const defaultUser = {
   id: uuid(),
-  username: "username",
-  name: "name",
+  username: "Odinson",
+  name: "Thor",
   profile_image:
     "https://images-na.ssl-images-amazon.com/images/I/71kNvlpS9GL._AC_SL1000_.jpg",
   // profile_image:
@@ -13,8 +13,8 @@ export const defaultUser = {
 export function getDefaultUser() {
   return {
     id: uuid(),
-    username: "username",
-    name: "name",
+    username: "Odinson",
+    name: "Thor",
     profile_image:
       "https://images-na.ssl-images-amazon.com/images/I/71kNvlpS9GL._AC_SL1000_.jpg",
   };
