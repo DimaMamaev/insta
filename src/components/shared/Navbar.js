@@ -1,8 +1,17 @@
-import React, { useState } from "react";
-import { useNavbarStyles } from "../../styles";
-import { AppBar, Hidden, InputBase, Avatar } from "@material-ui/core";
+import React, { useState, useEffect } from "react";
+import { useNavbarStyles, WhiteTooltip } from "../../styles";
+import {
+  AppBar,
+  Hidden,
+  InputBase,
+  Avatar,
+  Grid,
+  Typography,
+  Fade,
+} from "@material-ui/core";
 import { Link, useHistory } from "react-router-dom";
 import logo from "../../images/logo.png";
+
 import {
   LoadingIcon,
   AddIcon,
@@ -13,7 +22,7 @@ import {
   HomeIcon,
   HomeActiveIcon,
 } from "../../icons";
-import { defaultCurrentUser } from "../../data";
+import { defaultCurrentUser, getDefaultUser } from "../../data";
 
 function Navbar({ minimal }) {
   const classes = useNavbarStyles();
@@ -24,44 +33,91 @@ function Navbar({ minimal }) {
     <AppBar className={classes.appBar}>
       <section className={classes.section}>
         <Logo />
-        {!minimal && <Search />}
+        {!minimal && <Search history={history} />}
         {!minimal && <Links path={path} />}
       </section>
     </AppBar>
   );
 }
-function Search() {
+function Search({ history }) {
   const classes = useNavbarStyles();
   const [text, setText] = useState("");
-  let loading = false;
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const resultCheck = Boolean(text) && text.length > 0;
+
+  useEffect(() => {
+    if (!text.trim()) return;
+    setResults(Array.from({ length: 5 }, () => getDefaultUser()));
+  }, [text]);
 
   function handleClearInput() {
-    setText(" ");
+    setText("");
   }
 
   return (
     <Hidden only="xs">
-      <InputBase
-        onChange={(event) => setText(event.target.value)}
-        className={classes.input}
-        startAdornment={<span className={classes.searchIcon} />}
-        endAdornment={
-          loading ? (
-            <LoadingIcon />
-          ) : (
-            <span className={classes.clearIcon} onClick={handleClearInput} />
+      <WhiteTooltip
+        arrow
+        interactive
+        TransitionComponent={Fade}
+        open={resultCheck}
+        title={
+          resultCheck && (
+            <Grid className={classes.resultContainer} container>
+              {results.map((result) => (
+                <Grid
+                  key={result.id}
+                  item
+                  className={classes.resultLink}
+                  onClick={() => {
+                    history.push(`/${result.username}`);
+
+                    handleClearInput();
+                  }}
+                >
+                  <div className={classes.resultWrapper}>
+                    <div className={classes.avatarWrapper}>
+                      <Avatar src={result.profile_image} alt="User avatar" />
+                    </div>
+                    <div className={classes.nameWrapper}>
+                      <Typography variant="body1">{result.username}</Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        {result.name}
+                      </Typography>
+                    </div>
+                  </div>
+                </Grid>
+              ))}
+            </Grid>
           )
         }
-        placeholder="Search"
-        value={text}
-      />
+      >
+        <InputBase
+          onChange={(event) => setText(event.target.value)}
+          className={classes.input}
+          startAdornment={<span className={classes.searchIcon} />}
+          endAdornment={
+            loading ? (
+              <LoadingIcon />
+            ) : (
+              <span className={classes.clearIcon} onClick={handleClearInput} />
+            )
+          }
+          placeholder="Search"
+          value={text}
+        />
+      </WhiteTooltip>
     </Hidden>
   );
 }
 function Links({ path }) {
   const classes = useNavbarStyles();
   const [showList, setList] = useState(false);
-
+  function handleToggleList() {
+    setList((prev) => !prev);
+  }
   return (
     <div className={classes.linksContainer}>
       <div className={classes.linksWrapper}>
@@ -72,7 +128,7 @@ function Links({ path }) {
         <Link to="/explore">
           {path === "/explore" ? <ExploreActiveIcon /> : <ExploreIcon />}
         </Link>
-        <div className={classes.notifications}>
+        <div className={classes.notifications} onClick={handleToggleList}>
           {showList ? <LikeActiveIcon /> : <LikeIcon />}
         </div>
         <Link to={`/${defaultCurrentUser.username}`}>
