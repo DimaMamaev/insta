@@ -12,6 +12,7 @@ import {
   Zoom,
   Divider,
   DialogTitle,
+  Avatar,
 } from "@material-ui/core";
 import ProfilePicture from "../components/shared/ProfilePicture";
 import { Link } from "react-router-dom";
@@ -43,8 +44,8 @@ function ProfilePage() {
                 isOwner={isOwner}
                 handleMenuOptions={handleMenuOptions}
               />
-              <PostCountSection />
-              <NameBioSection />
+              <PostCountSection user={defaultCurrentUser} />
+              <NameBioSection user={defaultCurrentUser} />
             </CardContent>
           </Card>
         </Hidden>
@@ -59,9 +60,9 @@ function ProfilePage() {
                   handleMenuOptions={handleMenuOptions}
                 />
               </section>
-              <NameBioSection />
+              <NameBioSection user={defaultCurrentUser} />
             </CardContent>
-            <PostCountSection />
+            <PostCountSection user={defaultCurrentUser} />
           </Card>
         </Hidden>
         {showOptions && (
@@ -74,11 +75,17 @@ function ProfilePage() {
 function ProfileNameSection({ user, isOwner, handleMenuOptions }) {
   const classes = useProfilePageStyles();
   let followBtn;
-  const [isFollowing] = useState(false);
+  const [isFollowing] = useState(true);
   const [isFollower] = useState(false);
+  const [showUnfollowDialog, setUnfollowDialog] = useState(false);
+
   if (isFollowing) {
     followBtn = (
-      <Button variant="outlined" className={classes.button}>
+      <Button
+        variant="outlined"
+        onClick={() => setUnfollowDialog(true)}
+        className={classes.button}
+      >
         Following
       </Button>
     );
@@ -136,19 +143,97 @@ function ProfileNameSection({ user, isOwner, handleMenuOptions }) {
           )}
         </section>
       </Hidden>
+      {showUnfollowDialog && (
+        <UnfollowingDialog
+          onClose={() => setUnfollowDialog(false)}
+          user={user}
+        />
+      )}
     </>
   );
 }
 
-function PostCountSection() {
+function UnfollowingDialog({ onClose, user }) {
   const classes = useProfilePageStyles();
 
-  return <div>123</div>;
+  return (
+    <Dialog
+      open
+      classes={{
+        scrollPaper: classes.unfollowDialogScrollPaper,
+      }}
+      onClose
+      TransitionComponent={Zoom}
+    >
+      <div className={classes.wrapper}>
+        <Avatar
+          src={user.profile_image}
+          alt="user avatar"
+          className={classes.avatar}
+        />
+      </div>
+      <Typography
+        align="center"
+        className={classes.unfollowDialogText}
+        variant="body2"
+      >
+        Unfollow @{user.username} ?
+      </Typography>
+      <Divider />
+      <Button className={classes.unfollowButton}>Unfollow</Button>
+      <Divider />
+      <Button onClick={onClose} className={classes.cancelButton}>
+        Cancel
+      </Button>
+    </Dialog>
+  );
 }
-function NameBioSection() {
-  const classes = useProfilePageStyles();
 
-  return <div>123</div>;
+function PostCountSection({ user }) {
+  const classes = useProfilePageStyles();
+  const optionsList = ["posts", "followers", "following"];
+
+  return (
+    <>
+      <Hidden smUp>
+        <Divider />
+      </Hidden>
+      <section className={classes.followingSection}>
+        {optionsList.map((option) => (
+          <div key={option} className={classes.followingText}>
+            <Typography className={classes.followingCount}>
+              {user[option].length}
+            </Typography>
+            <Hidden xsDown>
+              <Typography>{option}</Typography>
+            </Hidden>
+            <Hidden smUp>
+              <Typography color="textSecondary">{option}</Typography>
+            </Hidden>
+          </div>
+        ))}
+      </section>
+      <Hidden smUp>
+        <Divider />
+      </Hidden>
+    </>
+  );
+}
+function NameBioSection({ user }) {
+  const classes = useProfilePageStyles();
+  const { name, bio, website } = user;
+
+  return (
+    <section className={classes.section}>
+      <Typography className={classes.typography}>{name}</Typography>
+      <Typography className={classes.typography}>{bio}</Typography>
+      <a href={website} target="_blank" rel="noopener noreferrer">
+        <Typography className={classes.typography} color="secondary">
+          {website}
+        </Typography>
+      </a>
+    </section>
+  );
 }
 function OptionsMenu({ handleMenuOptionsOnClose }) {
   const classes = useProfilePageStyles();

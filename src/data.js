@@ -62,12 +62,12 @@ export const defaultNotifications = [
 export const defaultCurrentUser = {
   id: uuid(),
   username: "Loki",
-  name: "cat",
+  name: "Cat",
   profile_image:
     "https://images.fineartamerica.com/images/artworkimages/mediumlarge/1/cool-cat-with-glasses-and-headphones-julio-cesar.jpg",
-  website: "https://react12.io",
-  email: "me@gmail.com",
-  bio: "This is my bio",
+  website: "https://catwebsite.io",
+  email: "cat@gmail.com",
+  bio: "This is my cat biography",
   phone_number: "555-555-5555",
   posts: Array.from({ length: 10 }, () => getDefaultPost()),
   followers: [defaultUser],
