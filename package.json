@@ -1,4 +1,5 @@
 {
+  "homepage": "http://DimaMamaev.github.io/insta",
   "name": "instagram-react12",
   "version": "0.1.0",
   "private": true,
@@ -14,6 +15,7 @@
     "apollo-link-ws": "^1.0.19",
     "date-fns": "^2.10.0",
     "firebase": "^7.15.0",
+    "gh-pages": "^3.0.0",
     "graphql": "^14.6.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
@@ -28,12 +30,13 @@
     "uuid": "^7.0.1"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "now-build": "react-scripts build",
-    "deploy": "npx now --target production"
+    "now-build": "react-scripts build"
   },
   "eslintConfig": {
     "extends": "react-app"
