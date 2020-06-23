@@ -5,9 +5,11 @@ import SEO from "../components/shared/Seo";
 import { Card, TextField, Button, Typography } from "@material-ui/core";
 import { Link, useHistory } from "react-router-dom";
 import { AuthContext } from "../auth";
+import { useForm } from "react-hook-form";
 
 function SignUpPage() {
   const classes = useSignUpPageStyles();
+  const { register, handleSubmit } = useForm();
   const history = useHistory();
   const { signInwithEmailAndPassword } = useContext(AuthContext);
 
@@ -60,7 +62,6 @@ function SignUpPage() {
                 margin="dense"
                 type="email"
                 className={classes.textField}
-                onChange={onChangeHandler}
               />
               <TextField
                 name="name"
@@ -69,7 +70,6 @@ function SignUpPage() {
                 label="Full Name"
                 margin="dense"
                 className={classes.textField}
-                onChange={onChangeHandler}
               />
               <TextField
                 name="username"
@@ -78,7 +78,6 @@ function SignUpPage() {
                 label="Username"
                 margin="dense"
                 className={classes.textField}
-                onChange={onChangeHandler}
                 autoComplete="username"
               />
               <TextField
@@ -89,7 +88,6 @@ function SignUpPage() {
                 type="password"
                 margin="dense"
                 className={classes.textField}
-                onChange={onChangeHandler}
                 autoComplete="new-password"
               />
               <Button
