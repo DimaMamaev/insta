@@ -1,12 +1,31 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { useSignUpPageStyles } from "../styles";
 import { LoginWithFacebook } from "./login";
 import SEO from "../components/shared/Seo";
 import { Card, TextField, Button, Typography } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import { AuthContext } from "../auth";
 
 function SignUpPage() {
   const classes = useSignUpPageStyles();
+  const history = useHistory();
+  const { signInwithEmailAndPassword } = useContext(AuthContext);
+
+  const [values, setValues] = useState({
+    email: "",
+    name: "",
+    username: "",
+    password: "",
+  });
+  function onChangeHandler(event) {
+    const { name, value } = event.target;
+    setValues((prev) => ({ ...prev, [name]: value }));
+  }
+  async function onSubmitHandler(event) {
+    event.preventDefault();
+    await signInwithEmailAndPassword(values);
+    history.push("/");
+  }
 
   return (
     <div style={{ marginTop: 20 }}>
@@ -32,37 +51,45 @@ function SignUpPage() {
               </div>
               <div className={classes.orLine} />
             </div>
-            <form>
+            <form onSubmit={onSubmitHandler}>
               <TextField
+                name="email"
                 fullWidth
                 variant="filled"
                 label="Email"
                 margin="dense"
                 type="email"
                 className={classes.textField}
+                onChange={onChangeHandler}
               />
               <TextField
+                name="name"
                 fullWidth
                 variant="filled"
                 label="Full Name"
                 margin="dense"
                 className={classes.textField}
+                onChange={onChangeHandler}
               />
               <TextField
+                name="username"
                 fullWidth
                 variant="filled"
                 label="Username"
                 margin="dense"
                 className={classes.textField}
+                onChange={onChangeHandler}
                 autoComplete="username"
               />
               <TextField
+                name="password"
                 fullWidth
                 variant="filled"
                 label="Password"
                 type="password"
                 margin="dense"
                 className={classes.textField}
+                onChange={onChangeHandler}
                 autoComplete="new-password"
               />
               <Button

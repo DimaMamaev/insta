@@ -12,10 +12,9 @@ import PostModal from "./components/post/PostModal";
 import { AuthContext } from "./auth";
 
 function App() {
+  const history = useHistory();
   const { authState } = useContext(AuthContext);
   console.log(authState);
-
-  const history = useHistory();
   const location = useLocation();
   const prevLocation = useRef(location);
   const modal = location.state?.modal;
