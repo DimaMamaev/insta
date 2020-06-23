@@ -6,15 +6,18 @@ import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import { ApolloProvider } from "@apollo/react-hooks";
 import { client } from "./graphql/client";
+import AuthProvider from "./auth";
 
 ReactDOM.render(
-  <ApolloProvider client={client}>
-    <BrowserRouter>
-      <MuiThemeProvider theme={theme}>
-        <CssBaseline />
-        <App />
-      </MuiThemeProvider>
-    </BrowserRouter>
-  </ApolloProvider>,
+  <AuthProvider>
+    <ApolloProvider client={client}>
+      <BrowserRouter>
+        <MuiThemeProvider theme={theme}>
+          <CssBaseline />
+          <App />
+        </MuiThemeProvider>
+      </BrowserRouter>
+    </ApolloProvider>
+  </AuthProvider>,
   document.getElementById("root")
 );
