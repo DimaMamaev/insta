@@ -6,27 +6,16 @@ import { Card, TextField, Button, Typography } from "@material-ui/core";
 import { Link, useHistory } from "react-router-dom";
 import { AuthContext } from "../auth";
 import { useForm } from "react-hook-form";
+import isEmail from "validator/lib/isEmail";
 
 function SignUpPage() {
   const classes = useSignUpPageStyles();
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, formState } = useForm({ mode: "onBlur" });
   const history = useHistory();
   const { signInwithEmailAndPassword } = useContext(AuthContext);
 
-  const [values, setValues] = useState({
-    email: "",
-    name: "",
-    username: "",
-    password: "",
-  });
-  function onChangeHandler(event) {
-    const { name, value } = event.target;
-    setValues((prev) => ({ ...prev, [name]: value }));
-  }
-  async function onSubmitHandler(event) {
-    event.preventDefault();
-    await signInwithEmailAndPassword(values);
-    history.push("/");
+  function onSubmit(data) {
+    console.log({ data });
   }
 
   return (
@@ -53,9 +42,13 @@ function SignUpPage() {
               </div>
               <div className={classes.orLine} />
             </div>
-            <form onSubmit={onSubmitHandler}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <TextField
                 name="email"
+                inputRef={register({
+                  required: true,
+                  validate: (input) => isEmail(input),
+                })}
                 fullWidth
                 variant="filled"
                 label="Email"
@@ -65,6 +58,11 @@ function SignUpPage() {
               />
               <TextField
                 name="name"
+                inputRef={register({
+                  required: true,
+                  minLength: 3,
+                  maxLength: 20,
+                })}
                 fullWidth
                 variant="filled"
                 label="Full Name"
@@ -73,6 +71,12 @@ function SignUpPage() {
               />
               <TextField
                 name="username"
+                inputRef={register({
+                  required: true,
+                  minLength: 3,
+                  maxLength: 20,
+                  pattern: /^[a-zA-Z0-9_.]*$/,
+                })}
                 fullWidth
                 variant="filled"
                 label="Username"
@@ -82,6 +86,10 @@ function SignUpPage() {
               />
               <TextField
                 name="password"
+                inputRef={register({
+                  required: true,
+                  minLength: 6,
+                })}
                 fullWidth
                 variant="filled"
                 label="Password"
@@ -96,6 +104,7 @@ function SignUpPage() {
                 color="primary"
                 className={classes.button}
                 type="submit"
+                disabled={!formState.isValid || formState.isSubmitting}
               >
                 Sign up
               </Button>

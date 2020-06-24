@@ -6,20 +6,12 @@ import { createContext } from "react";
 import defaultUserImage from "./images/default-user-image.jpg";
 import { CREATE_USER } from "./graphql/mutations";
 import { useMutation } from "@apollo/react-hooks";
+import { firebaseInitializeData } from "./keys";
 
 const provider = new firebase.auth.GoogleAuthProvider();
 
 // Find these options in your Firebase console
-firebase.initializeApp({
-  apiKey: "AIzaSyCZ6NmpYmMrZhCQvAi4jfVrPxL31Nsz8kA",
-  authDomain: "insta-clone-app-69251.firebaseapp.com",
-  databaseURL: "https://insta-clone-app-69251.firebaseio.com",
-  projectId: "insta-clone-app-69251",
-  storageBucket: "insta-clone-app-69251.appspot.com",
-  messagingSenderId: "817962308734",
-  appId: "1:817962308734:web:a108c45fabc62e6190742f",
-  measurementId: "G-T8MMTRVEW2",
-});
+firebase.initializeApp(firebaseInitializeData);
 
 export const AuthContext = createContext();
 
