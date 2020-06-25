@@ -1,22 +1,47 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { useSignUpPageStyles } from "../styles";
 import { LoginWithFacebook } from "./login";
 import SEO from "../components/shared/Seo";
-import { Card, TextField, Button, Typography } from "@material-ui/core";
+import {
+  Card,
+  TextField,
+  Button,
+  Typography,
+  InputAdornment,
+} from "@material-ui/core";
 import { Link, useHistory } from "react-router-dom";
 import { AuthContext } from "../auth";
 import { useForm } from "react-hook-form";
 import isEmail from "validator/lib/isEmail";
+import {
+  HighlightOffRounded,
+  CheckCircleOutlineOutlined,
+} from "@material-ui/icons";
 
 function SignUpPage() {
   const classes = useSignUpPageStyles();
-  const { register, handleSubmit, formState } = useForm({ mode: "onBlur" });
+  const { register, handleSubmit, formState, errors } = useForm({
+    mode: "onBlur",
+  });
   const history = useHistory();
   const { signInwithEmailAndPassword } = useContext(AuthContext);
 
-  function onSubmit(data) {
-    console.log({ data });
+  async function onSubmit(data) {
+    await signInwithEmailAndPassword(data);
+    history.push("/");
   }
+  const errorIcon = (
+    <InputAdornment>
+      <HighlightOffRounded style={{ color: "red", width: 30, height: 30 }} />
+    </InputAdornment>
+  );
+  const validIcon = (
+    <InputAdornment>
+      <CheckCircleOutlineOutlined
+        style={{ color: "green", width: 30, height: 30 }}
+      />
+    </InputAdornment>
+  );
 
   return (
     <div style={{ marginTop: 20 }}>
@@ -49,6 +74,11 @@ function SignUpPage() {
                   required: true,
                   validate: (input) => isEmail(input),
                 })}
+                InputProps={{
+                  endAdornment: errors.email
+                    ? errorIcon
+                    : formState.touched.email && validIcon,
+                }}
                 fullWidth
                 variant="filled"
                 label="Email"
@@ -63,6 +93,11 @@ function SignUpPage() {
                   minLength: 3,
                   maxLength: 20,
                 })}
+                InputProps={{
+                  endAdornment: errors.name
+                    ? errorIcon
+                    : formState.touched.name && validIcon,
+                }}
                 fullWidth
                 variant="filled"
                 label="Full Name"
@@ -77,6 +112,11 @@ function SignUpPage() {
                   maxLength: 20,
                   pattern: /^[a-zA-Z0-9_.]*$/,
                 })}
+                InputProps={{
+                  endAdornment: errors.username
+                    ? errorIcon
+                    : formState.touched.username && validIcon,
+                }}
                 fullWidth
                 variant="filled"
                 label="Username"
@@ -90,6 +130,11 @@ function SignUpPage() {
                   required: true,
                   minLength: 6,
                 })}
+                InputProps={{
+                  endAdornment: errors.password
+                    ? errorIcon
+                    : formState.touched.password && validIcon,
+                }}
                 fullWidth
                 variant="filled"
                 label="Password"
