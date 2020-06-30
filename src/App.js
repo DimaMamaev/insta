@@ -21,7 +21,7 @@ function App() {
   const history = useHistory();
   const { authState } = useContext(AuthContext);
   const isAuth = authState.status === "in";
-  console.log(authState);
+  console.log(Boolean(isAuth));
   const location = useLocation();
   const prevLocation = useRef(location);
   const modal = location.state?.modal;

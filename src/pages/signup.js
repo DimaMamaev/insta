@@ -34,7 +34,8 @@ function SignUpPage() {
     try {
       setError("");
       await signInwithEmailAndPassword(data);
-      history.push("/explore");
+
+      setTimeout(() => history.push("/explore"), 0);
     } catch (error) {
       console.log("Registration error", error);
       handleErrorMessage(error);

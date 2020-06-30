@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useLoginPageStyles } from "../styles";
 import SEO from "../components/shared/Seo";
 import {
@@ -9,25 +9,50 @@ import {
   Typography,
   InputAdornment,
 } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import FacebookIconBlue from "../images/facebook-icon-blue.svg";
 import FacebookIconWhite from "../images/facebook-icon-white.png";
 import { useForm } from "react-hook-form";
+import { AuthContext } from "../auth";
+import isEmail from "validator/lib/isEmail";
+import { useApolloClient } from "@apollo/react-hooks";
+import { GET_USER_EMAIL } from "../graphql/queries";
 
 function LoginPage() {
   const classes = useLoginPageStyles();
+  const history = useHistory();
   const { register, handleSubmit, watch, formState } = useForm({
     mode: "onBlur",
   });
   const [showPW, setPWVisability] = useState(false);
   const typedPassword = Boolean(watch("password"));
+  const { logInWithEmailAndPassword } = useContext(AuthContext);
+  const client = useApolloClient();
 
   function togglePWVisability() {
     setPWVisability((prev) => !prev);
   }
 
-  function onSubmit(data) {
-    console.log({ data });
+  async function onSubmit({ login, password }) {
+    if (!isEmail(login)) {
+      login = await getUserEmail(login);
+    }
+
+    await logInWithEmailAndPassword(login, password);
+
+    setTimeout(() => history.push("/"), 0);
+  }
+
+  async function getUserEmail(login) {
+    const variables = { login };
+    const response = await client.query({
+      query: GET_USER_EMAIL,
+      variables,
+    });
+    console.log(response);
+
+    const userEmail = response.data.users[0]?.email || "no@email.com";
+    return userEmail;
   }
 
   return (
