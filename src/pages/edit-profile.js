@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useEditProfilePageStyles } from "../styles";
 import Layout from "../components/shared/Layout";
 import { useState } from "react";
@@ -14,13 +14,23 @@ import {
   Button,
 } from "@material-ui/core";
 import { Menu } from "@material-ui/icons";
-import { defaultCurrentUser } from "../data";
 import ProfilePicture from "../components/shared/ProfilePicture";
+import { UserContext } from "../App";
+import { useQuery } from "@apollo/react-hooks";
+import { GET_EDIT_USER_PROFILE } from "../graphql/queries";
+import LoadingScreen from "../components/shared/LoadingScreen";
 
 function EditProfilePage({ history }) {
   const classes = useEditProfilePageStyles();
+  const { currentUserId } = useContext(UserContext);
+
+  const variables = { id: currentUserId };
+  const { data, loading } = useQuery(GET_EDIT_USER_PROFILE, { variables });
+
   const path = history.location.pathname;
   const [showTabMenu, setTabMenu] = useState(false);
+
+  if (loading) return <LoadingScreen />;
 
   function handlerToggleTabMenu() {
     setTabMenu((prev) => !prev);
@@ -114,7 +124,7 @@ function EditProfilePage({ history }) {
           </Hidden>
         </nav>
         <main>
-          {path.includes("edit") && <EditUserInfo user={defaultCurrentUser} />}
+          {path.includes("edit") && <EditUserInfo user={data.users_by_pk} />}
         </main>
       </section>
     </Layout>
@@ -127,7 +137,7 @@ function EditUserInfo({ user }) {
   return (
     <section className={classes.container}>
       <div className={classes.pictureSectionItem}>
-        <ProfilePicture size={50} user={user} />
+        <ProfilePicture size={50} image={user.profile_image} />
         <div className={classes.justifySelfStart}>
           <Typography className={classes.typography}>
             {user.username}
