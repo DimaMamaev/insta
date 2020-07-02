@@ -29,7 +29,6 @@ function App() {
   const userId = isAuth ? authState.user.uid : null;
   const variables = { userId };
   const { data, loading } = useSubscription(CURRENT_USER_DATA, { variables });
-  console.log(Boolean(isAuth));
   const location = useLocation();
   const prevLocation = useRef(location);
   const modal = location.state?.modal;
