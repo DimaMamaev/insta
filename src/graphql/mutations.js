@@ -53,3 +53,18 @@ export const UPDATE_USER_PROFILE_DATA = gql`
     }
   }
 `;
+export const UPDATE_USER_PROFILE_AVATAR = gql`
+  mutation editUserAvatar(
+    $id: uuid!
+    $profileImage: String!
+  ) {
+    update_users(
+      where: { id: { _eq: $id } }
+      _set: {
+        profile_image: $profileImage
+      }
+    ) {
+      affected_rows
+    }
+  }
+`;
