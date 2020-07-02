@@ -12,17 +12,21 @@ import {
   Typography,
   TextField,
   Button,
+  Snackbar,
+  Slide,
 } from "@material-ui/core";
 import { Menu } from "@material-ui/icons";
 import ProfilePicture from "../components/shared/ProfilePicture";
 import { UserContext } from "../App";
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery, useMutation } from "@apollo/react-hooks";
 import { GET_EDIT_USER_PROFILE } from "../graphql/queries";
 import LoadingScreen from "../components/shared/LoadingScreen";
 import { useForm } from "react-hook-form";
 import isURL from "validator/lib/isURL";
 import isEmail from "validator/lib/isEmail";
 import isMobilePhone from "validator/lib/isMobilePhone";
+import { UPDATE_USER_PROFILE_DATA } from "../graphql/mutations";
+import { AuthContext } from "../auth";
 
 function EditProfilePage({ history }) {
   const classes = useEditProfilePageStyles();
@@ -138,11 +142,31 @@ function EditProfilePage({ history }) {
 function EditUserInfo({ user }) {
   const classes = useEditProfilePageStyles();
   const { register, handleSubmit } = useForm({ mode: "onBlur" });
+  const [editUser] = useMutation(UPDATE_USER_PROFILE_DATA);
+  const { updateEmail } = useContext(AuthContext);
+  const [error, setError] = useState({ type: "", message: "" });
+  const [updateMessage, setUpdateMessage] = useState(false);
 
-  function onSubmit(data) {
-    console.log({ data });
+  async function onSubmit(data) {
+    try {
+      setError({ type: "", message: "" });
+      const variables = { ...data, id: user.id };
+      await updateEmail(data.email);
+      await editUser({ variables });
+      setUpdateMessage(true);
+    } catch (error) {
+      console.log(error);
+
+      handleErrorMessage(error);
+    }
   }
-
+  function handleErrorMessage(error) {
+    if (error.message.includes("users_username_key")) {
+      setError({ type: "username", message: "Username is already taken " });
+    } else if (error.code.includes("auth")) {
+      setError({ type: "email", message: error.message });
+    }
+  }
   return (
     <section className={classes.container}>
       <div className={classes.pictureSectionItem}>
@@ -173,6 +197,7 @@ function EditUserInfo({ user }) {
         />
         <SectionItem
           name="username"
+          error={error}
           inputRef={register({
             required: true,
             pattern: /^[A-Za-z0-9_.]*$/,
@@ -223,6 +248,7 @@ function EditUserInfo({ user }) {
           </Typography>
         </div>
         <SectionItem
+          error={error}
           name="email"
           inputRef={register({
             required: true,
@@ -252,11 +278,18 @@ function EditUserInfo({ user }) {
           </Button>
         </div>
       </form>
+      <Snackbar
+        open={updateMessage}
+        message={<span>Profile updated!</span>}
+        autoHideDuration={6000}
+        TransitionComponent={Slide}
+        onClose={() => setUpdateMessage(false)}
+      />
     </section>
   );
 }
 
-function SectionItem({ type = "text", text, formItem, inputRef, name }) {
+function SectionItem({ type = "text", text, formItem, inputRef, name, error }) {
   const classes = useEditProfilePageStyles();
 
   return (
@@ -272,6 +305,7 @@ function SectionItem({ type = "text", text, formItem, inputRef, name }) {
         </Hidden>
       </aside>
       <TextField
+        helperText={error?.type === name && error.message}
         name={name}
         inputRef={inputRef}
         variant="outlined"

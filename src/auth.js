@@ -48,6 +48,10 @@ function AuthProvider({ children }) {
     });
   }, []);
 
+  async function updateEmail(email) {
+    await authState.user.updateEmail(email);
+  }
+
   async function logInWithGoogle() {
     const data = await firebase.auth().signInWithPopup(provider);
     if (data.additionalUserInfo.isNewUser) {
@@ -109,6 +113,7 @@ function AuthProvider({ children }) {
           signOut,
           signInwithEmailAndPassword,
           logInWithEmailAndPassword,
+          updateEmail,
         }}
       >
         {children}
