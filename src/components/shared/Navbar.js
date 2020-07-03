@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavbarStyles, WhiteTooltip, RedTooltip } from "../../styles";
 import {
   AppBar,
@@ -23,10 +23,13 @@ import {
   HomeIcon,
   HomeActiveIcon,
 } from "../../icons";
-import { defaultCurrentUser, getDefaultUser } from "../../data";
+import { defaultCurrentUser } from "../../data";
 import NotificationTooltip from "../notification/NotificationTooltip";
 import NotificationList from "../notification/NotificationList";
 import { useNProgress } from "@tanem/react-nprogress";
+import { SEARCH_USERS } from "../../graphql/queries";
+import { useLazyQuery } from "@apollo/react-hooks";
+import { UserContext } from "../../App";
 
 function Navbar({ minimal }) {
   const classes = useNavbarStyles();
@@ -54,14 +57,21 @@ function Search({ history }) {
   const classes = useNavbarStyles();
   const [text, setText] = useState("");
   const [results, setResults] = useState([]);
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [searchUsers, { data }] = useLazyQuery(SEARCH_USERS);
 
   const resultCheck = Boolean(text) && text.length > 0;
 
   useEffect(() => {
     if (!text.trim()) return;
-    setResults(Array.from({ length: 5 }, () => getDefaultUser()));
-  }, [text]);
+    setLoading(true);
+    const variables = { query: `%${text}%` };
+    searchUsers({ variables });
+    if (data) {
+      setResults(data.users);
+      setLoading(false);
+    }
+  }, [text, data, searchUsers]);
 
   function handleClearInput() {
     setText("");
@@ -124,6 +134,7 @@ function Search({ history }) {
   );
 }
 function Links({ path }) {
+  const { currentUser } = useContext(UserContext);
   const classes = useNavbarStyles();
   const [showList, setList] = useState(false);
   const [showToolTip, setToolTip] = useState(true);
@@ -173,7 +184,7 @@ function Links({ path }) {
             }
           >
             <Avatar
-              src={defaultCurrentUser.profile_image}
+              src={currentUser.profile_image}
               className={classes.profileImage}
             />
           </div>
