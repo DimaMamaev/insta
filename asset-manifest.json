@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.js": "/insta/static/js/main.00b9d697.chunk.js",
-    "main.js.map": "/insta/static/js/main.00b9d697.chunk.js.map",
-    "runtime-main.js": "/insta/static/js/runtime-main.08abeace.js",
-    "runtime-main.js.map": "/insta/static/js/runtime-main.08abeace.js.map",
+    "main.js": "/insta/static/js/main.a982b4c6.chunk.js",
+    "main.js.map": "/insta/static/js/main.a982b4c6.chunk.js.map",
+    "runtime-main.js": "/insta/static/js/runtime-main.5aee8d2d.js",
+    "runtime-main.js.map": "/insta/static/js/runtime-main.5aee8d2d.js.map",
     "static/css/2.950f1153.chunk.css": "/insta/static/css/2.950f1153.chunk.css",
-    "static/js/2.0048056e.chunk.js": "/insta/static/js/2.0048056e.chunk.js",
-    "static/js/2.0048056e.chunk.js.map": "/insta/static/js/2.0048056e.chunk.js.map",
-    "static/js/3.5777dcc4.chunk.js": "/insta/static/js/3.5777dcc4.chunk.js",
-    "static/js/3.5777dcc4.chunk.js.map": "/insta/static/js/3.5777dcc4.chunk.js.map",
+    "static/js/2.4e62f215.chunk.js": "/insta/static/js/2.4e62f215.chunk.js",
+    "static/js/2.4e62f215.chunk.js.map": "/insta/static/js/2.4e62f215.chunk.js.map",
+    "static/js/3.8adb5daa.chunk.js": "/insta/static/js/3.8adb5daa.chunk.js",
+    "static/js/3.8adb5daa.chunk.js.map": "/insta/static/js/3.8adb5daa.chunk.js.map",
     "index.html": "/insta/index.html",
-    "precache-manifest.1cb503fb8a629dd7e582ddbc7dc58021.js": "/insta/precache-manifest.1cb503fb8a629dd7e582ddbc7dc58021.js",
+    "precache-manifest.0f91342ee18bb1ad15b9ef7cbb7deb6f.js": "/insta/precache-manifest.0f91342ee18bb1ad15b9ef7cbb7deb6f.js",
     "service-worker.js": "/insta/service-worker.js",
     "static/css/2.950f1153.chunk.css.map": "/insta/static/css/2.950f1153.chunk.css.map",
-    "static/js/2.0048056e.chunk.js.LICENSE.txt": "/insta/static/js/2.0048056e.chunk.js.LICENSE.txt",
+    "static/js/2.4e62f215.chunk.js.LICENSE.txt": "/insta/static/js/2.4e62f215.chunk.js.LICENSE.txt",
     "static/media/default-user-image.jpg": "/insta/static/media/default-user-image.a04d849c.jpg",
     "static/media/facebook-icon-blue.svg": "/insta/static/media/facebook-icon-blue.cbb9b56a.svg",
     "static/media/icon-sheet-2.png": "/insta/static/media/icon-sheet-2.a9a13771.png",
@@ -21,9 +21,9 @@
     "static/media/slick-theme.css": "/insta/static/media/slick.f97e3bbf.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.08abeace.js",
+    "static/js/runtime-main.5aee8d2d.js",
     "static/css/2.950f1153.chunk.css",
-    "static/js/2.0048056e.chunk.js",
-    "static/js/main.00b9d697.chunk.js"
+    "static/js/2.4e62f215.chunk.js",
+    "static/js/main.a982b4c6.chunk.js"
   ]
 }
