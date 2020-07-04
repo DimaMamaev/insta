@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { usePostStyles } from "../../styles";
 import UserCard from "../shared/UserCard";
 import {
@@ -21,9 +21,11 @@ import {
 } from "@material-ui/core";
 import OptionsDialog from "../shared/OptionsDialog";
 import PostSkeleton from "./PostSkeleton";
-import { useSubscription } from "@apollo/react-hooks";
+import { useSubscription, useMutation } from "@apollo/react-hooks";
 import { GET_POST } from "../../graphql/subscriptions";
 import { formatDateToNowShort } from "../../utils/formatDate";
+import { UserContext } from "../../App";
+import { LIKE_POST, UNLIKE_POST } from "../../graphql/mutations";
 
 function Post({ postId }) {
   const classes = usePostStyles();
@@ -32,7 +34,6 @@ function Post({ postId }) {
   const variables = { postId };
 
   const { data, loading } = useSubscription(GET_POST, { variables });
-  console.log(data);
 
   if (loading) return <PostSkeleton />;
   const {
@@ -47,7 +48,6 @@ function Post({ postId }) {
     created_at,
     location,
   } = data.posts_by_pk;
-  console.log(data.posts_by_pk);
   const likesCount = likes_aggregate.aggregate.count;
   return (
     <div className={classes.postContainer}>
@@ -65,7 +65,7 @@ function Post({ postId }) {
         </div>
         <div className={classes.postButtonsWrapper}>
           <div className={classes.postButtons}>
-            <LikeBtn />
+            <LikeBtn likes={likes} postId={id} authorId={user.id} />
             <Link to={`/p/${id}`}>
               <CommentIcon />
             </Link>
@@ -193,17 +193,26 @@ function UserComment({ comment }) {
   );
 }
 
-function LikeBtn() {
+function LikeBtn({ likes, postId, authorId }) {
   const classes = usePostStyles();
-  const [like, setLike] = useState(false);
+  const { currentUserId } = useContext(UserContext);
+  const isAlreadyLiked = likes.some(({ user_id }) => user_id === currentUserId);
+  const [like, setLike] = useState(isAlreadyLiked);
   const Icon = like ? UnlikeIcon : LikeIcon;
   const className = like ? classes.liked : classes.like;
   const onClick = like ? handleUnLike : handleLike;
+  const variables = {
+    postId,
+    userId: currentUserId,
+  };
+  const [likePost] = useMutation(LIKE_POST);
+  const [unLikePost] = useMutation(UNLIKE_POST);
+
   function handleUnLike() {
-    setLike(false);
+    unLikePost({ variables });
   }
   function handleLike() {
-    setLike(true);
+    likePost({ variables });
   }
   return <Icon className={className} onClick={onClick} />;
 }
