@@ -12,3 +12,42 @@ export const CURRENT_USER_DATA = gql`
     }
   }
 `;
+export const GET_POST = gql`
+  subscription getPost($postId: uuid!) {
+    posts_by_pk(id: $postId) {
+      id
+      caption
+      created_at
+      media
+      location
+      user {
+        id
+        username
+        name
+        profile_image
+      }
+      likes_aggregate {
+        aggregate {
+          count
+        }
+      }
+      likes {
+        id
+        user_id
+      }
+      saved_post {
+        id
+        user_id
+      }
+      comments(order_by: { created_at: desc }) {
+        id
+        content
+        created_at
+        user {
+          username
+          profile_image
+        }
+      }
+    }
+  }
+`;
