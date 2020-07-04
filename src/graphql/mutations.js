@@ -100,3 +100,20 @@ export const UNLIKE_POST = gql`
     }
   }
 `;
+export const SAVE_POST = gql`
+  mutation savePost($postId: uuid!, $userId: uuid!) {
+    insert_saved_posts(objects: { post_id: $postId, user_id: $userId }) {
+      affected_rows
+    }
+  }
+`;
+
+export const UNSAVE_POST = gql`
+  mutation unsavePost($postId: uuid!, $userId: uuid!) {
+    delete_saved_posts(
+      where: { post_id: { _eq: $postId }, user_id: { _eq: $userId } }
+    ) {
+      affected_rows
+    }
+  }
+`;

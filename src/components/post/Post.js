@@ -25,7 +25,12 @@ import { useSubscription, useMutation } from "@apollo/react-hooks";
 import { GET_POST } from "../../graphql/subscriptions";
 import { formatDateToNowShort } from "../../utils/formatDate";
 import { UserContext } from "../../App";
-import { LIKE_POST, UNLIKE_POST } from "../../graphql/mutations";
+import {
+  LIKE_POST,
+  UNLIKE_POST,
+  SAVE_POST,
+  UNSAVE_POST,
+} from "../../graphql/mutations";
 
 function Post({ postId }) {
   const classes = usePostStyles();
@@ -70,7 +75,7 @@ function Post({ postId }) {
               <CommentIcon />
             </Link>
             <ShareIcon />
-            <SaveBtn />
+            <SaveBtn savedPosts={saved_post} postId={id} />
           </div>
           <Typography className={classes.likes} variant="subtitle2">
             <span>
@@ -209,22 +214,39 @@ function LikeBtn({ likes, postId, authorId }) {
   const [unLikePost] = useMutation(UNLIKE_POST);
 
   function handleUnLike() {
+    setLike(false);
     unLikePost({ variables });
   }
   function handleLike() {
+    setLike(true);
     likePost({ variables });
   }
   return <Icon className={className} onClick={onClick} />;
 }
-function SaveBtn() {
+function SaveBtn({ savedPosts, postId }) {
   const classes = usePostStyles();
-  const [save, setSave] = useState(false);
+  const { currentUserId } = useContext(UserContext);
+  const isAlreadySaved = savedPosts.some(
+    ({ user_id }) => user_id === currentUserId
+  );
+
+  const [save, setSave] = useState(isAlreadySaved);
   const Icon = save ? RemoveIcon : SaveIcon;
   const onClick = save ? handleUnSave : handleSave;
+  const variables = {
+    postId,
+    userId: currentUserId,
+  };
+  const [savePost] = useMutation(SAVE_POST);
+  const [unSavePost] = useMutation(UNSAVE_POST);
+
   function handleUnSave() {
+    unSavePost({ variables });
+
     setSave(false);
   }
   function handleSave() {
+    savePost({ variables });
     setSave(true);
   }
   return <Icon className={classes.saveIcon} onClick={onClick} />;
