@@ -30,6 +30,7 @@ import { SEARCH_USERS } from "../../graphql/queries";
 import { useLazyQuery } from "@apollo/react-hooks";
 import { UserContext } from "../../App";
 import AddPostDialog from "../post/AddPostDialog";
+import { isAfter } from "date-fns";
 
 function Navbar({ minimal }) {
   const classes = useNavbarStyles();
@@ -134,10 +135,16 @@ function Search({ history }) {
   );
 }
 function Links({ path }) {
-  const { currentUser } = useContext(UserContext);
+  const { currentUser, currentUserId } = useContext(UserContext);
+  const newNotifications = currentUser.notifications.filter(
+    ({ created_at }) => {
+      return isAfter(new Date(created_at), new Date(currentUser.last_checked));
+    }
+  );
+  const hasSomeNotifications = newNotifications.length > 0;
   const classes = useNavbarStyles();
   const [showList, setList] = useState(false);
-  const [showToolTip, setToolTip] = useState(true);
+  const [showToolTip, setToolTip] = useState(hasSomeNotifications);
   const [media, setMedia] = useState(null);
   const [showPostDialog, setAddPostDialog] = useState(false);
   const inputRef = useRef();
@@ -168,7 +175,13 @@ function Links({ path }) {
   }
   return (
     <div className={classes.linksContainer}>
-      {showList && <NotificationList handleHideList={handleHideList} />}
+      {showList && (
+        <NotificationList
+          notifications={currentUser.notifications}
+          handleHideList={handleHideList}
+          currentUserId={currentUserId}
+        />
+      )}
       <div className={classes.linksWrapper}>
         {showPostDialog && (
           <AddPostDialog media={media} handleClose={handleClose} />
@@ -191,9 +204,12 @@ function Links({ path }) {
           open={showToolTip}
           onOpen={handleHideToolTip}
           TransitionComponent={Zoom}
-          title={<NotificationTooltip />}
+          title={<NotificationTooltip notifications={newNotifications} />}
         >
-          <div className={classes.notifications} onClick={handleToggleList}>
+          <div
+            className={hasSomeNotifications ? classes.notifications : ""}
+            onClick={handleToggleList}
+          >
             {showList ? <LikeActiveIcon /> : <LikeIcon />}
           </div>
         </RedTooltip>

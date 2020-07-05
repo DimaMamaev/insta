@@ -1,19 +1,30 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { useNotificationListStyles } from "../../styles";
-import { defaultNotifications } from "../../data";
 import { Grid, Avatar, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import FollowButton from "../shared/FollowButton";
 import useOutsideClick from "@rooks/use-outside-click";
+import { formatDateToNowShort } from "../../utils/formatDate";
+import { useMutation } from "@apollo/react-hooks";
+import { CHECK_NOTIFICATIONS } from "../../graphql/mutations";
 
-function NotificationList({ handleHideList }) {
+function NotificationList({ handleHideList, notifications, currentUserId }) {
   const classes = useNotificationListStyles();
   const listContainerRef = useRef();
   useOutsideClick(listContainerRef, handleHideList);
+  const [checkNotificationsList] = useMutation(CHECK_NOTIFICATIONS);
+
+  useEffect(() => {
+    const variables = {
+      userId: currentUserId,
+      lastChecked: new Date().toISOString(),
+    };
+    checkNotificationsList({ variables });
+  }, [currentUserId, checkNotificationsList]);
 
   return (
     <Grid ref={listContainerRef} container className={classes.listContainer}>
-      {defaultNotifications.map((notification) => {
+      {notifications.map((notification) => {
         const isLiked = notification.type === "like";
         const isFollow = notification.type === "follow";
 
@@ -37,8 +48,14 @@ function NotificationList({ handleHideList }) {
                   color="textSecondary"
                   className={classes.typography}
                 >
-                  {isLiked && "Likes your photo. 2d"}
-                  {isFollow && "Started following you. 3d"}
+                  {isLiked &&
+                    `Likes your photo. ${formatDateToNowShort(
+                      notification.created_at
+                    )}`}
+                  {isFollow &&
+                    `Started following you. ${formatDateToNowShort(
+                      notification.created_at
+                    )} `}
                 </Typography>
               </div>
             </div>
@@ -48,7 +65,7 @@ function NotificationList({ handleHideList }) {
                   <Avatar src={notification.post.media} alt="Post cover" />
                 </Link>
               )}
-              {isFollow && <FollowButton />}
+              {isFollow && <FollowButton id={notification.user.id} />}
             </div>
           </Grid>
         );
