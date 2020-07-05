@@ -210,6 +210,7 @@ function LikeBtn({ likes, postId, authorId }) {
   const variables = {
     postId,
     userId: currentUserId,
+    profileId: authorId
   };
   const [likePost] = useMutation(LIKE_POST);
   const [unLikePost] = useMutation(UNLIKE_POST);
