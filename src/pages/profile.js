@@ -32,7 +32,6 @@ function ProfilePage() {
   const { data, loading } = useQuery(GET_USER_PROFILE, { variables });
 
   if (loading) return <LoadingScreen />;
-  console.log(data);
 
   const [user] = data.users;
 

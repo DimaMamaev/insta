@@ -15,8 +15,8 @@ function GridPost({ post }) {
       },
     });
   }
-  const commentsCount = post.comments_aggregate.agrregate.count;
-  const likesCount = post.likes_aggregate.agrregate.count;
+  const commentsCount = post.comments_aggregate.aggregate.count;
+  const likesCount = post.likes_aggregate.aggregate.count;
   return (
     <div onClick={handleOpenPostModal} className={classes.gridPostContainer}>
       <div className={classes.gridPostOverlay}>
