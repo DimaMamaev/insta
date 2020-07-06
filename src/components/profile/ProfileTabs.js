@@ -70,7 +70,9 @@ function ProfileTabs({ user, isOwner }) {
             )}
           </Tabs>
         </Hidden>
-        <Hidden smUp>{user.posts.length === 0 && <Divider />}</Hidden>
+        <Hidden smUp>
+          {user.posts_aggregate.aggregate.count === 0 && <Divider />}
+        </Hidden>
         {tabValue === 0 && <ProfilePosts user={user} isOwner={isOwner} />}
         {tabValue === 1 && <SavedPosts user={user} />}
       </section>
@@ -81,7 +83,7 @@ function ProfileTabs({ user, isOwner }) {
 function ProfilePosts({ user, isOwner }) {
   const classes = useProfileTabsStyles();
 
-  if (user.posts.length === 0) {
+  if (user.posts_aggregate.aggregate.count === 0) {
     return (
       <section className={classes.profilePostsSection}>
         <div className={classes.noContent}>
@@ -97,9 +99,9 @@ function ProfilePosts({ user, isOwner }) {
   return (
     <article className={classes.article}>
       <div className={classes.postContainer}>
-        {user.posts.map((post) => (
+        {/* {user.posts.map((post) => (
           <GridPost key={post.id} post={post} />
-        ))}
+        ))} */}
       </div>
     </article>
   );

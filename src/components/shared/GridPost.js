@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 
 function GridPost({ post }) {
   const classes = useGridPostStyles();
-  const { likes, comments, media, id } = post;
+  const { media, id } = post;
   const history = useHistory();
   function handleOpenPostModal() {
     history.push({
@@ -15,16 +15,18 @@ function GridPost({ post }) {
       },
     });
   }
+  const commentsCount = post.comments_aggregate.agrregate.count;
+  const likesCount = post.likes_aggregate.agrregate.count;
   return (
     <div onClick={handleOpenPostModal} className={classes.gridPostContainer}>
       <div className={classes.gridPostOverlay}>
         <div className={classes.gridPostInfo}>
           <span className={classes.likes} />
-          <Typography>{likes}</Typography>
+          <Typography>{likesCount}</Typography>
         </div>
         <div className={classes.gridPostInfo}>
           <span className={classes.comments} />
-          <Typography>{comments.length}</Typography>
+          <Typography>{commentsCount}</Typography>
         </div>
       </div>
       <img src={media} alt="Post cover img" className={classes.image} />
