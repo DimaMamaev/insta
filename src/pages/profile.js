@@ -23,6 +23,7 @@ import { GET_USER_PROFILE } from "../graphql/queries";
 import LoadingScreen from "../components/shared/LoadingScreen";
 import { UserContext } from "../App";
 import { FOLLOW_USER, UNFOLLOW_USER } from "../graphql/mutations";
+import { useApolloClient } from "@apollo/react-hooks";
 
 function ProfilePage() {
   const { username } = useParams();
@@ -30,7 +31,10 @@ function ProfilePage() {
   const classes = useProfilePageStyles();
   const [showOptions, setOptions] = useState(false);
   const variables = { username };
-  const { data, loading } = useQuery(GET_USER_PROFILE, { variables });
+  const { data, loading } = useQuery(GET_USER_PROFILE, {
+    variables,
+    fetchPolicy: "no-cache",
+  });
 
   if (loading) return <LoadingScreen />;
 
@@ -300,10 +304,12 @@ function OptionsMenu({ handleMenuOptionsOnClose }) {
   const { signOut } = useContext(AuthContext);
   const [showLogOut, setLogOut] = useState(false);
   const history = useHistory();
+  const client = useApolloClient();
 
   function handlerLogOutShow() {
     setLogOut(true);
-    setTimeout(() => {
+    setTimeout(async () => {
+      await client.clearStore();
       signOut();
       history.push("/accounts/login");
     }, 3000);
