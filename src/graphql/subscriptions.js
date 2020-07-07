@@ -9,6 +9,18 @@ export const CURRENT_USER_DATA = gql`
       name
       username
       profile_image
+      followers {
+        user {
+          id
+          user_id
+        }
+      }
+      following {
+        user {
+          id
+          user_id
+        }
+      }
       notifications(order_by: { created_at: desc }) {
         id
         type
@@ -20,7 +32,7 @@ export const CURRENT_USER_DATA = gql`
         user {
           id
           username
-          profile_image 
+          profile_image
         }
       }
     }

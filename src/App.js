@@ -51,8 +51,12 @@ function App() {
   const isModalOpen = modal && prevLocation.current !== location;
   const currentUser = isAuth && data ? data.users[0] : null;
   const currentUserId = currentUser.id;
+  const followingUsers = currentUser.following.map(({ user }) => user.id);
+  const followersUsers = currentUser.followers.map(({ user }) => user.id);
   return (
-    <UserContext.Provider value={{ currentUser, currentUserId }}>
+    <UserContext.Provider
+      value={{ currentUser, currentUserId, followersUsers, followingUsers }}
+    >
       <Switch location={isModalOpen ? prevLocation.current : location}>
         <Route path="/" exact component={FeedPage} />
         <Route path="/explore" component={ExplorePage} />
