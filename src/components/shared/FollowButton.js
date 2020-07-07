@@ -1,10 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useFollowButtonStyles } from "../../styles";
 import { Button } from "@material-ui/core";
+import { UserContext } from "../../App";
+import { useMutation } from "@apollo/react-hooks";
+import { FOLLOW_USER, UNFOLLOW_USER } from "../../graphql/mutations";
 
-function FollowButton({ side }) {
+function FollowButton({ side, id }) {
   const classes = useFollowButtonStyles({ side });
-  const [following, setFollowing] = useState(false);
+  const { currentUserId, followingUsers } = useContext(UserContext);
+  const isAlreadyFollowing = followingUsers.some(
+    (followingId) => followingId === id
+  );
+  const [following, setFollowing] = useState(isAlreadyFollowing);
+  const [followUser] = useMutation(FOLLOW_USER);
+  const [unfollowUser] = useMutation(UNFOLLOW_USER);
+  const variables = {
+    userIdToFollow: id,
+    currentUserId,
+  };
+  function handleFollowUser() {
+    setFollowing(true);
+    followUser({ variables });
+  }
+  function handleUnFollowUser() {
+    setFollowing(false);
+    unfollowUser({ variables });
+  }
 
   const followBtn = (
     <Button
@@ -12,7 +33,7 @@ function FollowButton({ side }) {
       className={classes.button}
       color="primary"
       fullWidth
-      onClick={() => setFollowing(true)}
+      onClick={handleFollowUser}
     >
       Follow
     </Button>
@@ -22,7 +43,7 @@ function FollowButton({ side }) {
       variant={side ? "outlined" : "text"}
       className={classes.button}
       fullWidth
-      onClick={() => setFollowing(false)}
+      onClick={handleUnFollowUser}
     >
       Following
     </Button>
