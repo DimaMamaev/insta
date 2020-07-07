@@ -127,3 +127,62 @@ export const SUGGEST_USERS = gql`
     }
   }
 `;
+
+export const EXPLORE_POSTS = gql`
+  query explorePosts($feedIds: [uuid!]!) {
+    posts(
+      order_by: {
+        created_at: desc
+        likes_aggregate: { count: desc }
+        comments_aggregate: { count: desc }
+      }
+      where: { user_id: { _nin: $feedIds } }
+    ) {
+      id
+      media
+      comments_aggregate {
+        aggregate {
+          count
+        }
+      }
+      likes_aggregate {
+        aggregate {
+          count
+        }
+      }
+    }
+  }
+`;
+
+export const GET_MORE_POSTS_FROM_USER = gql`
+  query getMorePostsFromUser($userId: uuid!, $postId: uuid!) {
+    posts(
+      limit: 6
+      where: { user_id: { _eq: $userId }, _not: { id: { _eq: $postId } } }
+    ) {
+      id
+      media
+      comments_aggregate {
+        aggregate {
+          count
+        }
+      }
+      likes_aggregate {
+        aggregate {
+          count
+        }
+      }
+    }
+  }
+`;
+export const GET_POSTS = gql`
+  query getPost($postId: uuid!) {
+    posts_by_pk(id: $postId) {
+      id
+      user {
+        id
+        username
+      }
+    }
+  }
+`;
