@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useCallback } from "react";
 import { useFeedPageStyles } from "../styles";
 import Layout from "../components/shared/Layout";
 import UserCard from "../components/shared/UserCard";
@@ -20,19 +20,19 @@ function FeedPage() {
   const variables = { feedIds: feedUsers, limit: 2 };
   const { data, loading, fetchMore } = useQuery(GET_FEED, { variables });
   const isPageBottom = usePageBottom();
-  function handleUpdateQuery(prev, { fetchMoreResult }) {
+  const handleUpdateQuery = useCallback((prev, { fetchMoreResult }) => {
     if (fetchMoreResult.posts.length === 0) {
       setEndOfFeedList(true);
       return prev;
     }
     return { posts: [...prev.posts, ...fetchMoreResult.posts] };
-  }
+  }, []);
   useEffect(() => {
     if (!isPageBottom || !data) return;
     const lastTimestamp = data.posts[data.posts.length - 1].created_at;
     const updatedVariables = { ...variables, lastTimestamp };
     fetchMore({ variables: updatedVariables, updateQuery: handleUpdateQuery });
-  }, [isPageBottom, data, variables, handleUpdateQuery, fetchMore]);
+  }, [isPageBottom, data, variables, handleUpdateQuery, fetchMore, feedUsers]);
 
   if (loading) return <LoadingScreen />;
 
