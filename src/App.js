@@ -53,9 +53,16 @@ function App() {
   const currentUserId = currentUser.id;
   const followingUsers = currentUser.following.map(({ user }) => user.id);
   const followersUsers = currentUser.followers.map(({ user }) => user.id);
+  const feedUsers = [...followingUsers, currentUserId];
   return (
     <UserContext.Provider
-      value={{ currentUser, currentUserId, followersUsers, followingUsers }}
+      value={{
+        currentUser,
+        currentUserId,
+        followersUsers,
+        followingUsers,
+        feedUsers,
+      }}
     >
       <Switch location={isModalOpen ? prevLocation.current : location}>
         <Route path="/" exact component={FeedPage} />
