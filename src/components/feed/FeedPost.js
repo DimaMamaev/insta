@@ -22,6 +22,7 @@ import HTMLEllipsis from "react-lines-ellipsis/lib/html";
 import FollowSuggestions from "../shared/FollowSuggestions";
 import OptionsDialog from "../shared/OptionsDialog";
 import { formatDateToNow } from "../../utils/formatDate";
+import Img from "react-graceful-image";
 
 function FeedPost({ post, index }) {
   const classes = useFeedPostStyles();
@@ -59,7 +60,7 @@ function FeedPost({ post, index }) {
         </div>
 
         <div>
-          <img src={media} alt="Post img" className={classes.image} />
+          <Img src={media} alt="Post img" className={classes.image} />
         </div>
         <div className={classes.postButtonsWrapper}>
           <div className={classes.postButtons}>
@@ -147,7 +148,11 @@ function FeedPost({ post, index }) {
       </article>
       {showFollowSuggestions && <FollowSuggestions />}
       {showDialogOptions && (
-        <OptionsDialog onClose={() => setDialogOptions(false)} />
+        <OptionsDialog
+          postId={id}
+          authorId={user.id}
+          onClose={() => setDialogOptions(false)}
+        />
       )}
     </>
   );

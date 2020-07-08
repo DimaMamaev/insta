@@ -32,6 +32,7 @@ import {
   UNSAVE_POST,
   CREATE_COMMENT,
 } from "../../graphql/mutations";
+import Img from "react-graceful-image";
 
 function Post({ postId }) {
   const classes = usePostStyles();
@@ -66,7 +67,7 @@ function Post({ postId }) {
         </div>
 
         <div className={classes.postImage}>
-          <img src={media} alt="Post img" className={classes.image} />
+          <Img src={media} alt="Post img" className={classes.image} />
         </div>
         <div className={classes.postButtonsWrapper}>
           <div className={classes.postButtons}>
