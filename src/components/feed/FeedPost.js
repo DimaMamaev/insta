@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useFeedPostStyles } from "../../styles";
 import UserCard from "../shared/UserCard";
 import {
@@ -23,6 +23,10 @@ import FollowSuggestions from "../shared/FollowSuggestions";
 import OptionsDialog from "../shared/OptionsDialog";
 import { formatDateToNow } from "../../utils/formatDate";
 import Img from "react-graceful-image";
+import { UserContext } from "../../App";
+import { useMutation } from "@apollo/react-hooks";
+import { LIKE_POST, UNLIKE_POST } from "../../graphql/mutations";
+import { GET_FEED } from "../../graphql/queries";
 
 function FeedPost({ post, index }) {
   const classes = useFeedPostStyles();
@@ -64,7 +68,7 @@ function FeedPost({ post, index }) {
         </div>
         <div className={classes.postButtonsWrapper}>
           <div className={classes.postButtons}>
-            <LikeBtn />
+            <LikeBtn likes={likes} postId={id} authorId={user.id} />
             <Link to={`/p/${id}`}>
               <CommentIcon />
             </Link>
@@ -158,17 +162,51 @@ function FeedPost({ post, index }) {
   );
 }
 
-function LikeBtn() {
+function LikeBtn({ likes, postId, authorId }) {
   const classes = useFeedPostStyles();
-  const [like, setLike] = useState(false);
+  const { currentUserId, feedUsers } = useContext(UserContext);
+  const isAlreadyLiked = likes.some(({ user_id }) => user_id === currentUserId);
+
+  const [like, setLike] = useState(isAlreadyLiked);
   const Icon = like ? UnlikeIcon : LikeIcon;
   const className = like ? classes.liked : classes.like;
   const onClick = like ? handleUnLike : handleLike;
+
+  const [likePost] = useMutation(LIKE_POST);
+  const [unlikePost] = useMutation(UNLIKE_POST);
+  const variables = {
+    postId,
+    userId: currentUserId,
+    profileId: authorId,
+  };
+
+  function handleUpdate(cache, result) {
+    const variables = { limit: 2, feedIds: feedUsers };
+    const data = cache.readQuery({
+      query: GET_FEED,
+      variables,
+    });
+    const typename = result.data.insert_likes?.__typename;
+    const count = typename === "likes_mutation_response" ? 1 : -1;
+    const posts = data.posts.map((post) => ({
+      ...post,
+      likes_aggregate: {
+        ...post.likes_aggregate,
+        aggregate: {
+          ...post.likes_aggregate.aggregate,
+          count: post.likes_aggregate.aggregate.count + count,
+        },
+      },
+    }));
+    cache.writeQuery({ query: GET_FEED, data: { posts } });
+  }
   function handleUnLike() {
     setLike(false);
+    unlikePost({ variables, update: handleUpdate });
   }
   function handleLike() {
     setLike(true);
+    likePost({ variables, update: handleUpdate });
   }
   return <Icon className={className} onClick={onClick} />;
 }
