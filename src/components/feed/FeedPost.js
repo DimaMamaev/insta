@@ -25,7 +25,12 @@ import { formatDateToNow } from "../../utils/formatDate";
 import Img from "react-graceful-image";
 import { UserContext } from "../../App";
 import { useMutation } from "@apollo/react-hooks";
-import { LIKE_POST, UNLIKE_POST } from "../../graphql/mutations";
+import {
+  LIKE_POST,
+  UNLIKE_POST,
+  SAVE_POST,
+  UNSAVE_POST,
+} from "../../graphql/mutations";
 import { GET_FEED } from "../../graphql/queries";
 
 function FeedPost({ post, index }) {
@@ -73,7 +78,7 @@ function FeedPost({ post, index }) {
               <CommentIcon />
             </Link>
             <ShareIcon />
-            <SaveBtn />
+            <SaveBtn savedPosts={saved_posts} postId={id} />
           </div>
           <Typography className={classes.likes} variant="subtitle2">
             <span>
@@ -210,16 +215,29 @@ function LikeBtn({ likes, postId, authorId }) {
   }
   return <Icon className={className} onClick={onClick} />;
 }
-function SaveBtn() {
+function SaveBtn({ postId, savedPosts }) {
   const classes = useFeedPostStyles();
-  const [save, setSave] = useState(false);
+  const { currentUserId } = useContext(UserContext);
+  const isAlreadySaved = savedPosts.some(
+    ({ user_id }) => user_id === currentUserId
+  );
+  const [save, setSave] = useState(isAlreadySaved);
   const Icon = save ? RemoveIcon : SaveIcon;
   const onClick = save ? handleUnSave : handleSave;
+  const [savePost] = useMutation(SAVE_POST);
+  const [removePost] = useMutation(UNSAVE_POST);
+  const variables = {
+    postId,
+    userId: currentUserId,
+  };
+
   function handleUnSave() {
     setSave(false);
+    removePost({ variables });
   }
   function handleSave() {
     setSave(true);
+    savePost({ variables });
   }
   return <Icon className={classes.saveIcon} onClick={onClick} />;
 }
