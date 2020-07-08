@@ -30,6 +30,7 @@ import {
   UNLIKE_POST,
   SAVE_POST,
   UNSAVE_POST,
+  CREATE_COMMENT,
 } from "../../graphql/mutations";
 import { GET_FEED } from "../../graphql/queries";
 
@@ -46,10 +47,12 @@ function FeedPost({ post, index }) {
     caption,
     comments,
     comments_aggregate,
-    saved_posts,
+    saved_post,
     location,
     created_at,
   } = post;
+  console.log(post);
+
   const showFollowSuggestions = index === 1;
   const likesCount = likes_aggregate.aggregate.count;
   const commentsCount = comments_aggregate.aggregate.count;
@@ -78,7 +81,7 @@ function FeedPost({ post, index }) {
               <CommentIcon />
             </Link>
             <ShareIcon />
-            <SaveBtn savedPosts={saved_posts} postId={id} />
+            <SaveBtn savedPosts={saved_post} postId={id} />
           </div>
           <Typography className={classes.likes} variant="subtitle2">
             <span>
@@ -152,7 +155,7 @@ function FeedPost({ post, index }) {
         </div>
         <Hidden xsDown>
           <Divider />
-          <Comment />
+          <Comment postId={id} />
         </Hidden>
       </article>
       {showFollowSuggestions && <FollowSuggestions />}
@@ -241,9 +244,49 @@ function SaveBtn({ postId, savedPosts }) {
   }
   return <Icon className={classes.saveIcon} onClick={onClick} />;
 }
-function Comment() {
+function Comment({ postId }) {
   const classes = useFeedPostStyles();
+  const { currentUserId, feedUsers } = useContext(UserContext);
+
   const [text, setText] = useState("");
+  const [createComment] = useMutation(CREATE_COMMENT);
+  function handleUpdate(cache, result) {
+    const variables = { limit: 2, feedUsers };
+    const data = cache.readQuery({
+      query: GET_FEED,
+      variables,
+    });
+    const oldComment = result.data.insert_comments.returning[0];
+    const newComment = {
+      ...oldComment,
+      user: { ...oldComment.user },
+    };
+    const posts = data.posts.map((post) => {
+      const newPost = {
+        ...post,
+        comments: [...post.comments, newComment],
+        comments_aggregate: {
+          ...post.comments_aggregate,
+          aggregate: {
+            ...post.comments_aggregate.aggregate,
+            count: post.comments_aggregate.aggregate.count + 1,
+          },
+        },
+      };
+      return post.id === postId ? newPost : post;
+    });
+    cache.writeQuery({ query: GET_FEED, data: { posts } });
+    setText("");
+  }
+  function handleAddComment() {
+    const variables = {
+      content: text,
+      postId,
+      userId: currentUserId,
+    };
+    createComment({ variables, update: handleUpdate });
+  }
+
   return (
     <div className={classes.commentContainer}>
       <TextField
@@ -263,6 +306,7 @@ function Comment() {
         }}
       />
       <Button
+        onClick={handleAddComment}
         color="primary"
         className={classes.commentButton}
         disabled={!text.trim()}
