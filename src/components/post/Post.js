@@ -39,7 +39,6 @@ function Post({ postId }) {
   const variables = { postId };
 
   const { data, loading } = useSubscription(GET_POST, { variables });
-  console.log(data);
 
   if (loading) return <PostSkeleton />;
   const {
@@ -98,7 +97,12 @@ function Post({ postId }) {
               caption={caption}
             />
             {comments.map((comment) => (
-              <UserComment comment={comment} key={comment.id} />
+              <UserComment
+                postId={id}
+                authorId={user.id}
+                comment={comment}
+                key={comment.id}
+              />
             ))}
           </div>
 
@@ -114,7 +118,11 @@ function Post({ postId }) {
         </div>
       </article>
       {showDialogOptions && (
-        <OptionsDialog onClose={() => setDialogOptions(false)} />
+        <OptionsDialog
+          postId={id}
+          authorId={user.id}
+          onClose={() => setDialogOptions(false)}
+        />
       )}
     </div>
   );
