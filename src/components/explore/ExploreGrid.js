@@ -9,9 +9,9 @@ import { UserContext } from "../../App";
 
 function ExploreGrid() {
   const classes = useExploreGridStyles();
-  const { followingUsers } = useContext(UserContext);
+  const { feedUsers } = useContext(UserContext);
   const variables = {
-    feedIds: followingUsers,
+    feedIds: feedUsers,
   };
   const { data, loading } = useQuery(EXPLORE_POSTS, { variables });
 
