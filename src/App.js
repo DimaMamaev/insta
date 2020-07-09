@@ -66,6 +66,7 @@ function App() {
     >
       <Switch location={isModalOpen ? prevLocation.current : location}>
         <Route path="/" exact component={FeedPage} />
+        <Route path="/insta" exact component={FeedPage} />
         <Route path="/explore" component={ExplorePage} />
         <Route exact path="/:username" component={ProfilePage} />
         <Route exact path="/p/:postId" component={PostPage} />
