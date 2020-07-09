@@ -23,7 +23,7 @@ import OptionsDialog from "../shared/OptionsDialog";
 import PostSkeleton from "./PostSkeleton";
 import { useSubscription, useMutation } from "@apollo/react-hooks";
 import { GET_POST } from "../../graphql/subscriptions";
-import { formatDateToNowShort } from "../../utils/formatDate";
+import { formatDateToNowShort, formatPostDate } from "../../utils/formatDate";
 import { UserContext } from "../../App";
 import {
   LIKE_POST,
@@ -55,6 +55,7 @@ function Post({ postId }) {
     location,
   } = data.posts_by_pk;
   const likesCount = likes_aggregate.aggregate.count;
+
   return (
     <div className={classes.postContainer}>
       <article className={classes.article}>
@@ -108,7 +109,7 @@ function Post({ postId }) {
           </div>
 
           <Typography color="textSecondary" className={classes.datePosted}>
-            1 DAY AGO
+            {formatPostDate(created_at)}
           </Typography>
           <Hidden xsDown>
             <div className={classes.comment}>
@@ -139,8 +140,8 @@ function AuthorCaption({ user, caption, createdAt }) {
         alt="User avatar"
         style={{ marginRight: 14, width: 35, height: 35 }}
       />
-      <div style={{ display: "flex", flexDirection: "column " }}>
-        <Link to={user.username}>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <Link to={`/${user.username}`}>
           <Typography
             variant="subtitle2"
             component="span"
@@ -170,7 +171,6 @@ function AuthorCaption({ user, caption, createdAt }) {
 
 function UserComment({ comment }) {
   const classes = usePostStyles();
-
   return (
     <div style={{ display: "flex" }}>
       <Avatar
@@ -178,8 +178,8 @@ function UserComment({ comment }) {
         alt="User avatar"
         style={{ marginRight: 14, width: 32, height: 32 }}
       />
-      <div style={{ display: "flex", flexDirection: "column " }}>
-        <Link to={comment.user.username}>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <Link to={`/${comment.user.username}`}>
           <Typography
             variant="subtitle2"
             component="span"

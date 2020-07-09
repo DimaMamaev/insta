@@ -51,7 +51,6 @@ function FeedPost({ post, index }) {
     location,
     created_at,
   } = post;
-  console.log(post);
 
   const showFollowSuggestions = index === 1;
   const likesCount = likes_aggregate.aggregate.count;
@@ -251,7 +250,7 @@ function Comment({ postId }) {
   const [text, setText] = useState("");
   const [createComment] = useMutation(CREATE_COMMENT);
   function handleUpdate(cache, result) {
-    const variables = { limit: 2, feedUsers };
+    const variables = { limit: 2, feedIds: feedUsers };
     const data = cache.readQuery({
       query: GET_FEED,
       variables,

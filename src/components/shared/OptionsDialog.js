@@ -13,11 +13,9 @@ function OptionsDialog({ onClose, authorId, postId }) {
   console.log(authorId, currentUserId);
 
   const isFollowing = followingUsers.some((id) => id === authorId);
-  console.log(isFollowing);
 
   const unReletedUser = !isOwner && !isFollowing;
   const topBtnMessage = isOwner ? "Delete" : "Unfollow";
-  console.log(topBtnMessage);
 
   const btnMessageOnClick = isOwner ? handleDeletePost : handleUnfollowUser;
   const [unfollowUser] = useMutation(UNFOLLOW_USER);

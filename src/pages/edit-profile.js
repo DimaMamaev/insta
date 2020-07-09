@@ -118,7 +118,7 @@ function EditProfilePage({ history }) {
             </Drawer>
           </Hidden>
           <Hidden
-            sxsDown
+            xsDown
             implementation="css"
             className={classes.permanentDrawerRoot}
           >
